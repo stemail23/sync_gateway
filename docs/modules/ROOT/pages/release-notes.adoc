@@ -155,3 +155,5 @@ handler not reloading user channels
 when attempting to make invalid update to a conflicting document
 * https://github.com/couchbase/sync_gateway/issues/3049[*#3049*] Allow
 non-winning tombstone revisions when running with allow_conflicts=false
+* https://github.com/couchbase/sync_gateway/issues/3275[*#3275*] BLIP
+replicator doesn’t support docIDs filter

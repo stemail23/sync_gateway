@@ -2215,7 +2215,9 @@ func (bucket *CouchbaseBucketGoCB) BucketItemCount() (itemCount int, err error) 
 
 	req.SetBasicAuth(user, pass)
 
-	resp, err := http.DefaultClient.Do(req)
+	goCBClient := bucket.goCBHttpClient()
+
+	resp, err := goCBClient.Do(req)
 	if err != nil {
 		return -1, err
 	}
@@ -2243,6 +2245,13 @@ func (bucket *CouchbaseBucketGoCB) BucketItemCount() (itemCount int, err error) 
 	itemCountFloat := itemCountRaw.(float64)
 
 	return int(itemCountFloat), nil
+
+}
+
+func (bucket *CouchbaseBucketGoCB) goCBHttpClient() *http.Client {
+
+	goCBClient := bucket.Bucket.IoRouter()
+	return goCBClient.HttpClient()
 
 }
 

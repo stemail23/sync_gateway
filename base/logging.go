@@ -456,7 +456,7 @@ func GetCallersName(depth int) string {
 
 // Partial interface for the SGLogger
 type SGLogger interface {
-	LogToR(key string, format string, args ...interface{})
+	Logf(logLevel LogLevel, logKey LogKey, format string, args ...interface{})
 }
 
 // Logs a message to the console, but only if the corresponding key is true in LogKeys.
@@ -776,6 +776,18 @@ func init() {
 	// This maintains consistent formatting (timestamps, levels, etc) in the output,
 	// and allows a single set of logging functions to be used, rather than fmt.Printf()
 	consoleLogger = newConsoleLoggerOrPanic(ConsoleLoggerConfig{})
+}
+
+// Panicf logs the given formatted string and args to the error log level and given log key and then panics.
+func Panicf(logKey LogKey, format string, args ...interface{}) {
+	Errorf(logKey, format, args...)
+	panic(fmt.Sprintf(format, args...))
+}
+
+// Fatalf logs the given formatted string and args to the error log level and given log key and then exits.
+func Fatalf(logKey LogKey, format string, args ...interface{}) {
+	Errorf(logKey, format, args...)
+	os.Exit(1)
 }
 
 // Errorf logs the given formatted string and args to the error log level and given log key.

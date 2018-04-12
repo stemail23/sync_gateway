@@ -913,7 +913,33 @@ func addPrefixes(format string, logLevel LogLevel, logKey LogKey) string {
 	return timestampPrefix + logLevelPrefix + logKeyPrefix + format
 }
 
-// color is a stub that can be used in the future to color based on log level
+// color wraps the given string with color based on logLevel
+// This won't work on Windows. Maybe use fatih's colour package?
 func color(str string, logLevel LogLevel) string {
-	return str
+	if !consoleLogger.ColorEnabled || runtime.GOOS == "windows" {
+		return str
+	}
+
+	var color string
+
+	switch logLevel {
+	case LevelError:
+		color = "\033[1;31m"
+	case LevelWarn:
+		color = "\033[1;33m"
+	case LevelInfo:
+		color = "\033[1;34m"
+	case LevelDebug:
+		color = "\033[0;36m"
+	case LevelNone:
+		color = "\033[0;32m"
+	}
+
+	return color + str + "\033[0m"
 }
+
+// func colorEnabled(f *os.File) bool {
+//     return os.Getenv("TERM") != "dumb" &&
+//             isatty.IsTerminal(f.Fd()) ||
+//             isatty.IsCygwinTerminal(f.Fd())
+// }

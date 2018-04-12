@@ -334,7 +334,7 @@ func ParseLogFlags(flags []string) {
 
 	ParseLogFlagsMap(keyMap)
 	logLock.Unlock()
-	Logf("Enabling logging: %s", flags)
+	Infof(KeyAll, "Enabling logging: %s", flags)
 }
 
 // Parses a map of log keys and enabled bool, probably coming from a argv flags.
@@ -815,6 +815,11 @@ func logTo(logLevel LogLevel, logKey LogKey, format string, args ...interface{})
 	// Prepend timestamp, level, log key
 	format = addPrefixes(format, logLevel, logKey)
 
+	// Warn and errors also print extra info.
+	if logLevel <= LevelWarn {
+		format += " -- " + GetCallersName(2)
+	}
+
 	// Perform log redaction, if necessary.
 	args = redact(args)
 
@@ -918,3 +923,13 @@ func color(str string, logLevel LogLevel) string {
 //             isatty.IsTerminal(f.Fd()) ||
 //             isatty.IsCygwinTerminal(f.Fd())
 // }
+
+// ConsoleLogLevel returns the enabled console log level.
+func ConsoleLogLevel() string {
+	return LogLevelName(*consoleLogger.LogLevel)
+}
+
+// ConsoleLogKeys returns the enabled console log keys.
+func ConsoleLogKeys() []string {
+	return consoleLogger.LogKey.EnabledLogKeys()
+}
